@@ -9,6 +9,7 @@ router.get('/', async (req, res) => {
     // find all products
     const productData = await Product.findAll({
       // be sure to include its associated Category and Tag data
+      // FIX: repeats product_id and tag_id twice
       include: [{ model: Category }, { model: Tag, through: ProductTag, as: 'tags' }],
     })
     console.log("productData: ", productData)
@@ -23,13 +24,15 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     // find a single product by its `id`
-    const productData = await Product.findByPk({
+    const productData = await Product.findByPk(req.params.id, {
       // be sure to include its associated Category and Tag data
-      include: [{ model: Category }, { model: Tag, through: ProductTag, as: 'products_and_tags' }],
-      where: {
-        id: req.params.id
-      }
+      include: [{ model: Category }, { model: Tag, through: ProductTag, as: 'tags' }]
     })
+
+    if (!productData) {
+      res.status(404).json({ message: 'No product found with this id!' });
+      return;
+    }
 
     res.status(200).json(productData);
   } catch (err) {
