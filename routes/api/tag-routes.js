@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
   // find all tags
   try {
     const tagData = await Tag.findAll({
-      // be sure to include its associated Product data
+      // include its associated Product data
       include: [{ model: Product, through: ProductTag, as: 'products' }],
     })
 
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
   try {
     // find a single tag by its `id`
     const tagData = await Tag.findByPk(req.params.id, {
-      // be sure to include its associated Product data
+      // include its associated Product data
       include: [{ model: Product, through: ProductTag, as: 'products' }]
     })
 
@@ -36,8 +36,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// create a new tag
 router.post('/', async (req, res) => {
-  // create a new tag
   try {
     const tagData = await Tag.create({ tag_name: req.body.tag_name });
     res.status(200).json(tagData)
@@ -47,8 +47,8 @@ router.post('/', async (req, res) => {
 
 });
 
+// update a tag's name by its `id` value
 router.put('/:id', async (req, res) => {
-  // update a tag's name by its `id` value
   try {
     const tagData = await Tag.update(
       {
@@ -71,16 +71,14 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// delete one tag by its `id` value
 router.delete('/:id', async (req, res) => {
   try {
-    // delete one tag by its `id` value
     const tagData = await Tag.destroy({
       where: {
         id: req.params.id
       }
     })
-    // remove instances of this product in the ProductTag table
-
     if (!tagData) {
       res.status(404).json({ message: 'No tag found with that id!' });
       return;

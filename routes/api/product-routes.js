@@ -12,7 +12,6 @@ router.get('/', async (req, res) => {
       // FIX: repeats product_id and tag_id twice
       include: [{ model: Category }, { model: Tag, through: ProductTag, as: 'tags' }],
     })
-    console.log("productData: ", productData)
 
     res.status(200).json(productData);
   } catch (err) {
@@ -50,7 +49,6 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
- // FIX is it okay to have category id and name null?
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -124,7 +122,6 @@ router.delete('/:id', async (req, res) => {
         id: req.params.id
       }
     })
-    // remove instances of this product in the ProductTag table
 
     if (!productData) {
       res.status(404).json({ message: 'No product found with that id!' });
